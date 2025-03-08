@@ -1,0 +1,95 @@
+# Sistema Metro Continuo
+
+Este proyecto simula un sistema ferroviario que involucra trenes, vagones, estaciones y pasajeros. La simulación incluye animaciones gráficas del movimiento de los trenes, eventos como aceleración, desaceleración, desacople y acople de vagones, así como la gestión de pasajeros que suben y bajan en las estaciones. Al finalizar la simulación, se genera un reporte detallado con estadísticas de pasajeros y tiempos.
+
+---
+
+## Características
+
+- **Simulación de trenes:** Controla el movimiento de trenes y vagones a lo largo de una ruta predefinida.
+- **Gestión de estaciones:** Cada estación maneja la creación de pasajeros, asignación de vagones y puntos críticos (desacople, acople).
+- **Eventos de movimiento:** Se simulan eventos de aceleración, desaceleración y espera en los vagones.
+- **Gestión de pasajeros:** Los pasajeros se asignan a posiciones en los vagones de forma ordenada, se actualiza su tiempo de viaje y se registran sus movimientos.
+- **Animación:** Se utiliza `matplotlib` para visualizar la animación de trenes y vagones, mostrando información como el número de pasajeros en cada celda.
+- **Reportes:** Al finalizar la simulación se genera un reporte que incluye:
+  - Número de pasajeros que llegaron a su destino.
+  - Promedio de metros recorridos por pasajero.
+  - Mediana del tiempo de espera de los vagones.
+  - Estadísticas adicionales exportadas a archivos CSV.
+
+---
+
+## Requisitos
+
+- Python 3.x
+- [NumPy](https://numpy.org/)
+- [Matplotlib](https://matplotlib.org/)
+
+> **Nota:** Los módulos `csv` y `random` son parte de la librería estándar de Python.
+
+---
+
+## Instalación
+
+1. **Clonar el repositorio:**
+
+   ```bash
+   git clone https://github.com/tu_usuario/train-simulator.git
+   cd train-simulator
+
+## Estructura del Proyecto
+
+- **main.py:** Archivo principal para configurar y ejecutar la simulación.
+- **Simulator.py:** Contiene la clase `Simulator`, que gestiona la lógica de simulación, animación y generación de reportes.
+- **Station.py:** Define la clase `Station` para la gestión de estaciones y pasajeros.
+- **Train.py:** Implementa la clase `Train`, que maneja el movimiento y eventos de los trenes.
+- **Wagon.py:** Define la clase `Wagon` para la representación y gestión de vagones.
+- **Passenger.py:** Implementa la clase `Passenger`, que almacena la información de cada pasajero.
+- **README.md:** Este archivo.
+
+---
+
+## Uso
+
+El archivo `main.py` contiene la configuración de la simulación, donde se pueden ajustar parámetros tales como:
+
+- Número de trenes y vagones.
+- Velocidad, aceleración y desaceleración.
+- Duración de la simulación.
+- Configuración de estaciones y flujos de pasajeros.
+
+El proyecto implementa tres modos de ejecución, ahora con nombres más representativos:
+
+- **run_simulation()**  
+  Ejecuta la simulación con animación y, al finalizar, genera el reporte final.
+
+- **animate_train_simulation()**  
+  Muestra únicamente la animación gráfica de los trenes y sus vagones.
+
+- **execute_simulation_logic()**  
+  Ejecuta la simulación lógica sin animación y genera el reporte final.
+
+Para ejecutar la simulación, simplemente descomenta la función deseada en `main.py` y ejecuta:
+
+```bash
+python main.py
+```
+
+## Personalización
+
+Puedes modificar los parámetros en el archivo `main.py` para adaptar la simulación a distintos escenarios. Entre los parámetros ajustables se incluyen:
+
+- **Parámetros generales:** Número de trenes, velocidad, aceleración, desaceleración y tiempo total de simulación.
+- **Parámetros de estación:** Capacidad, posición y matrices de flujos de pasajeros.
+- **Parámetros de vagones:** Dimensiones y capacidad de pasajeros por metro.
+
+## Reporte
+
+Al finalizar la simulación, se genera un reporte que se imprime en la consola y se exporta a archivos CSV (`passenger_report.csv` y `fail_passenger_report.csv`). El reporte incluye:
+
+- Número de pasajeros que llegaron a cada estación.
+- Número de pasajeros que fallaron al bajarse.
+- Promedio global de metros movidos por pasajero.
+- Headway de los trenes.
+- Mediana del tiempo de espera de los vagones.
+- Total de pasajeros transportados durante la simulación.
