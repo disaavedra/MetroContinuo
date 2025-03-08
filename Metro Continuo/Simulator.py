@@ -239,53 +239,71 @@ class Simulator:
             wagon.state = 2
 
     def handle_waiting_event(self, wagon):
+        """
+        Gestiona el evento de espera del vagón en la estación asignada:
+        - Permite que los pasajeros se bajen.
+        - Incorpora nuevos pasajeros si hay espacio.
+        - Verifica si se ha alcanzado el punto de acople para iniciar la aceleración.
+        """
         for station in self.stations:
             if wagon in station.wagons:
                 self.wait(wagon)
-                # Pasajeros que se bajan en su estación de destino
-                passengers_to_arrive = [p for p in wagon.passengers if p.end_station == station and not p.boarded_recently]
-                for passenger in passengers_to_arrive:
-                    wagon.passengers.remove(passenger)
-                    station.arrived_passengers.append(passenger)
-
-                passengers_failed_to_arrive = [p for p in wagon.passengers if p.end_station != station and not p.boarded_recently]
-                for passenger in passengers_failed_to_arrive:
-                    wagon.passengers.remove(passenger)
-                    station.fail_passengers_arrived.append(passenger)
-
-                # Subir pasajeros al vagón si hay espacio
-                if wagon.state == 2 and station.passengers:
-                    available_space = wagon.wagon_space_for_passenger - len(wagon.passengers)
-                    if available_space > 0:
-                        num_passengers_to_transfer = min(6, len(station.passengers), available_space)
-                        for _ in range(num_passengers_to_transfer):
-                            passenger = random.choice(station.passengers)
-                            station.passengers.remove(passenger)
-
-                            # Llamar a la función para poner al pasajero en una posición específica
-                            passenger.current_wagon = wagon
-                            passenger.current_train = None
-                            self.add_passenger_to_ordered_position(wagon, passenger)
-                            passenger.boarded_recently = True
-
-                # Verificar si el tren ha alcanzado el punto de acoplamiento para comenzar a acelerar
-                if station.start_wagon_for_coupling_point is not None:
-                    for train in self.trains:
-                        if len(train.positions) >= 2:
-                            previous_position = train.positions[-2]
-                            current_position = train.positions[-1]
-                            if previous_position <= station.start_wagon_for_coupling_point <= current_position:
-
-                                wagon.waiting_time_list.append(wagon.waiting_time)
-                                wagon.waiting_time = 0
-                                
-                                wagon.state = 3
-                                self.add_wagon_to_accelerate.append(wagon)
-                                
-                                for passenger in wagon.passengers:
-                                    passenger.boarded_recently = False
-                                break
+                self.handle_alighting_passengers(wagon, station)
+                self.handle_boarding_passengers(wagon, station)
+                self.check_coupling_point(wagon, station)
                 break
+
+    def handle_alighting_passengers(self, wagon, station):
+        """
+        Procesa el descenso de pasajeros:
+          - Los pasajeros cuyo destino es la estación bajan y se agregan a arrived_passengers.
+          - Los demás, que fallan al bajar, se agregan a fail_passengers_arrived.
+        """
+        passengers_to_arrive = [p for p in wagon.passengers if p.end_station == station and not p.boarded_recently]
+        for passenger in passengers_to_arrive:
+            wagon.passengers.remove(passenger)
+            station.arrived_passengers.append(passenger)
+
+        passengers_failed_to_arrive = [p for p in wagon.passengers if p.end_station != station and not p.boarded_recently]
+        for passenger in passengers_failed_to_arrive:
+            wagon.passengers.remove(passenger)
+            station.fail_passengers_arrived.append(passenger)
+
+    def handle_boarding_passengers(self, wagon, station):
+        """
+        Incorpora pasajeros al vagón si está en estado de espera y hay espacio disponible.
+        Selecciona hasta 6 pasajeros de forma aleatoria para transferirlos al vagón.
+        """
+        if wagon.state == 2 and station.passengers:
+            available_space = wagon.wagon_space_for_passenger - len(wagon.passengers)
+            if available_space > 0:
+                num_passengers_to_transfer = min(6, len(station.passengers), available_space)
+                for _ in range(num_passengers_to_transfer):
+                    passenger = random.choice(station.passengers)
+                    station.passengers.remove(passenger)
+                    passenger.current_wagon = wagon
+                    passenger.current_train = None
+                    self.add_passenger_to_ordered_position(wagon, passenger)
+                    passenger.boarded_recently = True
+
+    def check_coupling_point(self, wagon, station):
+        """
+        Verifica si se ha alcanzado el punto de acople para iniciar la aceleración del vagón.
+        Si es así, registra el tiempo de espera, cambia el estado del vagón y actualiza la bandera de los pasajeros.
+        """
+        if station.start_wagon_for_coupling_point is not None:
+            for train in self.trains:
+                if len(train.positions) >= 2:
+                    previous_position = train.positions[-2]
+                    current_position = train.positions[-1]
+                    if previous_position <= station.start_wagon_for_coupling_point <= current_position:
+                        wagon.waiting_time_list.append(wagon.waiting_time)
+                        wagon.waiting_time = 0
+                        wagon.state = 3
+                        self.add_wagon_to_accelerate.append(wagon)
+                        for passenger in wagon.passengers:
+                            passenger.boarded_recently = False
+                        break
 
     def add_passenger_to_ordered_position(self, wagon, passenger):
         """
