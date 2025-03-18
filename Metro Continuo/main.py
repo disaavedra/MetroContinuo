@@ -9,9 +9,9 @@ from Station import Station
 # Parámetros generales
 number_of_trains = 5
 number_of_wagons = 5
-speed_km_h = 60
+speed_km_h = 50
 speed_m_s = speed_km_h * 1000 / 3600
-simulator_time = 10800  # Tiempo total de simulación en segundos
+simulator_time = 3600  # Tiempo total de simulación en segundos
 acceleration = 1
 deceleration = 1
 interval = 1  # Factor para acelerar el tiempo de la animación
@@ -82,7 +82,7 @@ real_stations = [
 def create_stations(stations_number, wagon_length_m, wagon_width_m, station_capacity):
     stations = []
     for s in range(1, stations_number + 1):
-        flows = [random.randint(1000, 2000) if i != s - 1 else 0 for i in range(stations_number)]
+        flows = [random.randint(100, 200) if i != s - 1 else 0 for i in range(stations_number)]
         station = Station(name=f"Station {s}", position=s * 2000, wagon_length_m=wagon_length_m,
                           wagon_width_m=wagon_width_m, station_capacity=station_capacity,
                           passenger_flows=flows, passenger_per_meter=passenger_per_meter)
@@ -90,8 +90,8 @@ def create_stations(stations_number, wagon_length_m, wagon_width_m, station_capa
     return stations
 
 # Seleccionar el conjunto de estaciones a utilizar:
-stations = create_stations(7, wagon_length_m, wagon_width_m, station_capacity)
-# stations = real_stations  # Usamos las estaciones reales con nombres de la línea L6
+# stations = create_stations(7, wagon_length_m, wagon_width_m, station_capacity)
+stations = real_stations  # Usamos las estaciones reales con nombres de la línea L6
 
 # Calcular el límite de posición (para definir el final del trayecto)
 position_limit = max(station.position for station in stations) + 200
@@ -130,5 +130,5 @@ simulator.run_simulation()
 #simulator.animate_train_simulation()
 
 # Para ejecutar la simulación lógica sin animación:
-#simulator.execute_simulation_logic()
+# simulator.execute_simulation_logic()
 

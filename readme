@@ -93,3 +93,62 @@ Al finalizar la simulación, se genera un reporte que se imprime en la consola y
 - Headway de los trenes.
 - Mediana del tiempo de espera de los vagones.
 - Total de pasajeros transportados durante la simulación.
+
+## Consideraciones y Notas de desarrollo
+
+1. Visualización de Operaciones de Pasajeros:
+   - Los archivos FailPassengerDistribution, PassengerTimesDistribution y 
+     PassengerMoveDistribution se utilizan para visualizar de forma más 
+     detallada las operaciones y comportamientos de los pasajeros durante
+     la simulación.
+   - NOTA: Los dos primeros archivos (FailPassengerDistribution y 
+     PassengerTimesDistribution) solo se pueden utilizar con la lista definida
+     en la línea 6.
+   - Para modificar dicha lista y permitir el uso de nombres personalizados para 
+     las estaciones, se debe realizar el cambio correspondiente en la función 
+     Simulator.export_passenger_report.
+
+2. Variable "position_limit":
+   - Actualmente, a la variable position_limit se le suma un valor fijo (en este 
+     caso, 200) para evitar iteraciones excesivas en el mismo punto de una 
+     estación y prevenir conflictos durante el acople del carro.
+   - Se planea investigar y mejorar esta lógica en futuras versiones.
+
+3. Visualización del Interior de Trenes y Movimiento de Pasajeros:
+   - La función simulator.animate_train_simulation() permite visualizar el interior
+     de los trenes, los carros y el movimiento de los pasajeros, pero es intensiva 
+     en recursos y puede ser muy lenta.
+   - Se recomienda usarla con 1 o 2 trenes para evitar demoras excesivas y poder
+     observar cómo se movilizan los pasajeros.
+   - A futuro se explorará la posibilidad de implementar permutaciones entre 
+     pasajeros que viajan en sentidos contrarios para mejorar aún más el flujo y 
+     reducir los atochamientos.
+
+4. Velocidad de Movimiento de Pasajeros:
+   - La variable estática Passenger.movement_speed se mantiene en 1 (metro por 
+     segundo) en la versión actual.
+   - Aunque no se ha abordado en esta versión, podría ser relevante para estudios
+     futuros sobre la velocidad de los pasajeros dentro del tren.
+   - En pruebas preliminares, modificar este valor no genera grandes diferencias, 
+     pero se mantiene como referencia para futuras mejoras.
+
+5. Tiempos y Movimientos en la Estación:
+   - Los tiempos de espera en la estación (excluyendo el tiempo que el carro espera
+     en la estación) y el movimiento de los pasajeros dentro de la propia estación 
+     no se consideran en esta versión.
+   - Esto puede ampliarse en futuras versiones para obtener un modelo más completo 
+     de la operación ferroviaria.
+
+6. Capacidad de Abordaje por Unidad de Tiempo:
+   - Existe otra variable estática que no se abordó en este estudio: la cantidad de 
+     pasajeros que abordan del andén al vagón.
+   - Actualmente, se permite un máximo de 6 pasajeros por unidad de tiempo.
+   - Para modificar este parámetro, se debe ajustar la función 
+     Simulator.handle_boarding_passengers.
+
+7. Visualización de Pasajeros en la Simulación Completa:
+   - La visualización de pasajeros en la simulación al ejecutar 
+     simulator.run_simulation() puede verse afectada por las variables modificadas.
+   - Si la visualización resulta deficiente, se recomienda ajustar la variable 
+     label_offset dentro de la función Simulator.update para mejorar la legibilidad 
+     de los labels en pantalla.
